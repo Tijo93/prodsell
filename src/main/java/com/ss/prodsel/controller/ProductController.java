@@ -41,7 +41,7 @@ import static com.ss.prodsel.controller.util.ValidationErrorCodes.nonPositivePro
 @Validated
 @Tag(name = "Products")
 public class ProductController {
-  private final Logger logger = LoggerFactory.getLogger(getClass());
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
   private final ProductService productService;
 
   public ProductController(final ProductService productService) {
@@ -50,33 +50,35 @@ public class ProductController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public void addProduct(@Valid @RequestBody ProductAddDTO dto) {
+  public void addProduct(@Valid @RequestBody final ProductAddDTO dto) {
+    LOGGER.info("Adding product: {}", dto.name());
     productService.addProduct(dto);
   }
 
   @GetMapping
   @Operation(summary = "Retrieve all products")
-  public List<ProductResponseDTO> getProducts(@PageableDefault Pageable pageable) {
+  public List<ProductResponseDTO> getProducts(@PageableDefault final Pageable pageable) {
+    LOGGER.info("Retrieving all products");
     return productService.getAllProducts(pageable);
   }
 
   @GetMapping("/{productId}")
-  public ProductResponseDTO getProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable int productId) {
+  public ProductResponseDTO getProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable final int productId) {
     return productService.getProductById(productId);
   }
 
   @PutMapping("/{productId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsAdmin
-  public void updateProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable int productId,
-                            @Valid @RequestBody ProductUpdateDTO updateDTO) {
+  public void updateProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable final int productId,
+                            @Valid @RequestBody final ProductUpdateDTO updateDTO) {
     productService.updateProduct(productId, updateDTO);
   }
 
   @DeleteMapping("/{productId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsAdmin
-  public void deleteProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable int productId) {
+  public void deleteProduct(@Min(value = 1, message = nonPositiveProductID) @PathVariable final int productId) {
     productService.deleteProduct(productId);
   }
 
@@ -86,13 +88,13 @@ public class ProductController {
   }
 
   @GetMapping("/revenue/{productId}")
-  public double getProductRevenue(@Min(value = 1, message = nonPositiveProductID) @PathVariable int productId) {
+  public double getProductRevenue(@Min(value = 1, message = nonPositiveProductID) @PathVariable final int productId) {
     return productService.getRevenueByProduct(productId);
   }
 
   @GetMapping(value = "/export", produces = MediaType.APPLICATION_PDF_VALUE)
   public ResponseEntity<Resource> downloadPDF() throws JRException, IOException {
-    Resource resource = productService.exportProductsAsPdf();
+    final var resource = productService.exportProductsAsPdf();
     return ResponseEntity.ok()
       .contentType(MediaType.APPLICATION_PDF)
       .contentLength(resource.contentLength())
