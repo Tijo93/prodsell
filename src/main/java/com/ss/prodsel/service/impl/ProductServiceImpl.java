@@ -146,11 +146,11 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Resource exportProductsAsPdf() throws FileNotFoundException, JRException {
     final List<ProductStatistics> products = productRepository.getProductStatistics();
-    final var file = ResourceUtils.getFile("classpath:jasper/products2.jrxml");
+    final var file = ResourceUtils.getFile("classpath:jasper/productsv6.jrxml");
     final JasperReport report = JasperCompileManager.compileReport(file.getAbsolutePath());
     JRSaver.saveObject(report, "ProductReport.jasper");
     final Map<String, Object> params = Map.of("ReportTitle", "Products Report");
-    final var jasperPrint = JasperFillManager.fillReport(report, params, new JRBeanCollectionDataSource(products));
+    final var jasperPrint = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(products));
     return new ByteArrayResource(JasperExportManager.exportReportToPdf(jasperPrint));
   }
 }

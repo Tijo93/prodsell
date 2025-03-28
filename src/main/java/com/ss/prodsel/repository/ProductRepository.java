@@ -26,7 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
   double totalRevenueForProduct(final @Param("productId") int productId);
 
   @Query(value = """
-    SELECT p.id, p.name, p.description, p.quantity, p.price, coalesce(p.price*s.quantity, 0) AS revenue FROM product p LEFT JOIN sale s ON p.id=s.product_id
+    WITH total_sold AS
+    (SELECT sum(quantity) AS total, product_id FROM sale GROUP BY product_id)
+    SELECT p.id, p.name, p.description, p.quantity, p.price, coalesce(p.price*s.total, 0) AS revenue
+    FROM product p LEFT JOIN total_sold s ON p.id=s.product_id
     """, nativeQuery = true)
   List<ProductStatistics> getProductStatistics();
 }

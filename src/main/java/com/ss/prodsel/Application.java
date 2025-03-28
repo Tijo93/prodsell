@@ -28,7 +28,7 @@ public class Application implements CommandLineRunner {
 
 
   /**
-   * @param args
+   * @param args Command line arguments
    */
   @Override
   public void run(final String... args) {

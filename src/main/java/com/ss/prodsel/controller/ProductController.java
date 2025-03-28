@@ -99,9 +99,7 @@ public class ProductController {
       .contentType(MediaType.APPLICATION_PDF)
       .contentLength(resource.contentLength())
       .header(HttpHeaders.CONTENT_DISPOSITION,
-        ContentDisposition.attachment()
-          .filename("product-report.pdf")
-          .build().toString())
+        ContentDisposition.attachment().filename("product-report.pdf").build().toString())
       .body(resource);
   }
 }
